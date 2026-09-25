@@ -1,0 +1,25 @@
+{
+  "name": "be-ecommerce",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reliable checkout and rewards service",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --experimental-sqlite src/index.ts",
+    "dev": "node --experimental-sqlite --watch src/index.ts",
+    "seed": "node --experimental-sqlite src/db/seed.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-sqlite --test \"tests/**/*.test.ts\""
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2"
+  }
+}
