@@ -67,6 +67,16 @@ deliberately scarce inventory so oversell protection is easy to exercise:
 | 4  | 27-inch Monitor         | $249.99   | 20        |
 | 5  | Limited Edition Desk Mat| $19.99    | **2**     |
 
+## Trying it out
+
+- **Web UI** — a minimal test frontend (plain HTML/CSS/JS, no build step) is
+  served at `http://localhost:3000/`. It covers the full flow: create a
+  cart, add/update/remove items, check out (with an auto-filled idempotency
+  key and optional coupon code), and trigger the admin actions.
+- **Swagger UI** — interactive API docs generated from `openapi.yaml`, with
+  a "Try it out" form for every endpoint, are served at
+  `http://localhost:3000/docs`.
+
 ## API documentation
 
 Full request/response/status-code documentation is in

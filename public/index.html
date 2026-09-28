@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reliable Checkout &amp; Rewards</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-top-row">
+        <h1>Reliable Checkout &amp; Rewards</h1>
+        <span id="orders-placed-badge" class="badge badge-count hidden"></span>
+      </div>
+      <p class="subtitle">
+        Minimal test UI for the API &mdash; see <a href="/docs">/docs</a> for
+        full API reference (Swagger UI).
+      </p>
+    </header>
+
+    <main>
+      <section id="cart-section" class="panel">
+        <h2>Cart</h2>
+        <div class="row">
+          <button id="new-cart-btn">New cart</button>
+          <span id="cart-id-label" class="muted">No cart yet</span>
+          <span id="cart-status-badge" class="badge hidden"></span>
+        </div>
+        <table id="cart-items-table" class="hidden">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Unit price</th>
+              <th>Line total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-items-body"></tbody>
+        </table>
+        <p id="cart-subtotal" class="hidden"></p>
+
+        <div id="checkout-form" class="hidden">
+          <h3>Checkout</h3>
+          <label>
+            Idempotency key
+            <input id="idempotency-key" type="text" />
+          </label>
+          <label>
+            Coupon code (optional)
+            <input id="coupon-code" type="text" placeholder="MILESTONE-1-XXXXXXXX" />
+          </label>
+          <button id="checkout-btn">Check out</button>
+        </div>
+      </section>
+
+      <section id="products-section" class="panel">
+        <h2>Products</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Inventory</th>
+              <th>Qty</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="products-body"></tbody>
+        </table>
+      </section>
+
+      <section id="order-section" class="panel hidden">
+        <h2>Last order</h2>
+        <div id="order-card" class="order-card">
+          <div class="order-card-header">
+            <div>
+              <span class="eyebrow">Order</span>
+              <span id="order-id" class="mono-id"></span>
+            </div>
+            <span id="order-date" class="muted"></span>
+          </div>
+
+          <table class="order-lines-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit price</th>
+                <th>Line total</th>
+              </tr>
+            </thead>
+            <tbody id="order-lines-body"></tbody>
+          </table>
+
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span id="order-subtotal"></span>
+            </div>
+            <div id="order-discount-row" class="summary-row discount-row hidden">
+              <span>Discount <span id="order-coupon-badge" class="badge badge-coupon"></span></span>
+              <span id="order-discount" class="discount-amount"></span>
+            </div>
+            <div class="summary-row total-row">
+              <span>Total</span>
+              <span id="order-total"></span>
+            </div>
+          </div>
+        </div>
+        <details class="raw-json">
+          <summary>View raw JSON</summary>
+          <pre id="order-output"></pre>
+        </details>
+      </section>
+
+      <section id="admin-section" class="panel">
+        <h2>Admin</h2>
+        <div class="row">
+          <button id="generate-coupon-btn">Generate milestone coupon</button>
+          <button id="load-report-btn">Load report</button>
+        </div>
+
+        <div id="coupon-card" class="coupon-ticket hidden">
+          <div class="coupon-ticket-main">
+            <span class="eyebrow">Milestone <span id="coupon-milestone"></span> reward</span>
+            <div class="coupon-code" id="coupon-code-display"></div>
+            <span id="coupon-status" class="badge"></span>
+          </div>
+          <div class="coupon-ticket-stub">
+            <span class="coupon-percent" id="coupon-percent"></span>
+            <span class="muted">off</span>
+          </div>
+        </div>
+
+        <div id="report-card" class="hidden">
+          <div id="report-stats" class="stat-grid"></div>
+          <table id="report-products-table" class="hidden">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Units sold</th>
+              </tr>
+            </thead>
+            <tbody id="report-products-body"></tbody>
+          </table>
+        </div>
+
+        <details class="raw-json">
+          <summary>View raw JSON</summary>
+          <pre id="admin-output"></pre>
+        </details>
+      </section>
+    </main>
+
+    <div id="error-banner" class="hidden"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
