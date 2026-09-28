@@ -50,6 +50,21 @@ describe("carts", () => {
     }
   });
 
+  it("rejects non-positive or non-integer quantities on PATCH (update quantity)", async () => {
+    const cart = await postJson<{ id: string }>(`${server.baseUrl}/carts`, {});
+    await postJson(`${server.baseUrl}/carts/${cart.body.id}/items`, {
+      productId: 2,
+      quantity: 1,
+    });
+    for (const quantity of [0, -1, 1.5, "two", null]) {
+      const res = await patchJson(`${server.baseUrl}/carts/${cart.body.id}/items/2`, {
+        quantity,
+      });
+      assert.equal(res.status, 400, `quantity ${JSON.stringify(quantity)} should be rejected`);
+      assert.equal(res.body.error.code, "VALIDATION_ERROR");
+    }
+  });
+
   it("computes integer-cent line totals and accumulates repeated adds", async () => {
     const cart = await postJson<{ id: string }>(`${server.baseUrl}/carts`, {});
     await postJson(`${server.baseUrl}/carts/${cart.body.id}/items`, {
