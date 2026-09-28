@@ -259,6 +259,20 @@ concurrency decision above).
 "Discount calculations must be deterministic and must never make an order
 total negative."
 
+**Options considered:**
+1. Floating-point (`float`/`double`) arithmetic for money — the conventional
+   default, but introduces non-deterministic rounding drift, which the spec
+   explicitly warns against.
+2. Integer cents with the discount rounded to the nearest cent — deterministic,
+   but can round in the customer's favor, weakening the "customer never
+   charged less than `100 - percentOff` percent" guarantee to an
+   approximation rather than a structural fact.
+3. Integer cents with the discount rounded up (ceiling) — could let a
+   discount exceed the configured `percentOff`, working against a
+   conservative-for-the-business rounding rule.
+4. Integer cents with the discount floored (chosen) — deterministic, and the
+   discount can structurally never exceed the configured percentage.
+
 **Choice:** All prices, totals, and discounts are `INTEGER` cents in SQLite
 and `number` (safe integer range) in TypeScript — never `float`/`double`
 arithmetic on currency. Discount is `floor(subtotalCents * percentOff /
@@ -280,6 +294,19 @@ floating-point drift to reason about anywhere in the codebase.
 **Context:** "Return errors that are distinguishable and useful to an API
 client."
 
+**Options considered:**
+1. Rely on HTTP status codes alone, with no body-level code — simple, but
+   several distinct business conditions collapse onto the same status
+   (`409` alone covers already-checked-out, insufficient inventory, and
+   already-redeemed-coupon), leaving a client unable to distinguish them.
+2. Free-form, human-readable message strings for clients to parse — brittle,
+   since message text isn't a stable contract and is easy to change
+   accidentally.
+3. Per-route/ad hoc error body shapes — inconsistent across endpoints and
+   harder to assert against uniformly in tests.
+4. A single envelope with a fixed, closed set of string codes (chosen) —
+   machine-readable, consistent across every route, and directly assertable.
+
 **Choice:** Every error response is `{ error: { code, message, details? } }`
 with a fixed set of string `code`s (`domain/errors.ts`) mapped to HTTP
 status (400 validation, 404 not-found, 409 state conflict, 422 idempotency
@@ -299,6 +326,16 @@ place (`ErrorCode`) rather than inventing ad hoc shapes per route.
 
 **Context:** The spec explicitly allows treating successful checkout as
 payment success, or introducing a small payment abstraction.
+
+**Options considered:**
+1. No payment abstraction; checkout success is payment success (chosen).
+2. A synchronous, always-succeeds stub payment step — adds a
+   `PENDING_PAYMENT`-like state and transition with no corresponding
+   business rule to test against, i.e. untested scaffolding.
+3. A fully async payment gateway with webhook-driven confirmation
+   (`PENDING` order, inventory soft-held, confirmed later) — the realistic
+   production shape, but a materially bigger change than the stated timebox
+   allows and not required by the spec.
 
 **Choice:** No payment abstraction. `POST /checkout` succeeding **is** the
 "payment succeeded" event; there is no separate payment-pending state or
