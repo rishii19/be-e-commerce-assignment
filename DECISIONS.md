@@ -56,10 +56,18 @@ concurrent or repeated requests included:
   count itself, so `n = 5` means milestone 1 at order 5, milestone 2 at
   order 10, etc.
 - **Retrying checkout on the same cart with no/different idempotency key.**
-  Since a cart can only ever be checked out once, I treat this as a genuine
-  conflict (`409 CART_ALREADY_CHECKED_OUT`, with the existing order id in
-  `details`) rather than silently returning the prior order — only an
-  *exact* key match is treated as "this is the same request, replay it."
+  These are two distinct cases, not one, because the missing-header check
+  runs unconditionally before the cart-status check
+  (`checkout.service.ts:41-46` and `:71-78`):
+  - **Omitting the `Idempotency-Key` header entirely** always returns
+    `400 IDEMPOTENCY_KEY_REQUIRED`, regardless of the cart's status — a key
+    is required to attempt checkout at all, so this short-circuits before
+    the cart is even looked up.
+  - **Supplying a *different* key on a cart that has already been checked
+    out** returns `409 CART_ALREADY_CHECKED_OUT`, with the existing order id
+    in `details`, rather than silently returning the prior order — only an
+    *exact* key match (same key, same request hash) is treated as "this is
+    the same request, replay it."
 
 ## Decision: Persistence — `node:sqlite` instead of better-sqlite3 or Postgres+Docker
 

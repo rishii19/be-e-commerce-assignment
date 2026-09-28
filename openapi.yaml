@@ -24,6 +24,7 @@ paths:
                   products:
                     type: array
                     items: { $ref: "#/components/schemas/Product" }
+        "500": { $ref: "#/components/responses/InternalError" }
 
   /products/{id}:
     get:
@@ -47,6 +48,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/CartView" }
+        "500": { $ref: "#/components/responses/InternalError" }
 
   /carts/{cartId}:
     get:
@@ -229,6 +231,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminReport" }
+        "500": { $ref: "#/components/responses/InternalError" }
 
 components:
   parameters:
@@ -251,6 +254,11 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
     ValidationError:
       description: The request failed validation.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    InternalError:
+      description: An unexpected server error occurred.
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
